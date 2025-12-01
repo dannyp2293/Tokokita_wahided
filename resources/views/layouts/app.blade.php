@@ -20,12 +20,13 @@
 
             <!-- Page Heading -->
 
-               <div class="flex justify-center">
+               <div class="flex justify-center mt-10">
                 <img src="{{ url('logo.png') }}" class="h-14"> </div>
             <!-- Page Content -->
             <main>
                 {{ $slot }}
             </main>
+            <x-footer/>
         </div>
     </body>
 </html>
