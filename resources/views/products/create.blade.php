@@ -9,9 +9,10 @@
 
 </div>
 <div class="mt-4">
-    <form method="POST">
-         <div class="mt-4">
-            <x-input-label for="nama" :value="__('Email')" />
+    <form method="POST" action="{{ route('products.store') }}">
+        @csrf
+         <div class="mt-4" >
+            <x-input-label for="nama" :value="__('Nama')" />
             <x-text-input id="nama" class="block mt-1 w-full" type="text" name="nama" :value="old('nama')" required/>
             <x-input-error :messages="$errors->get('nama')" class="mt-2" />
         </div>
@@ -22,9 +23,13 @@
         </div>
            <div  class="mt-4">
             <x-input-label for="deskripsi" :value="__('Deskripsi')" />
-            <x-text-input id="deskripsi" class="block mt-1 w-full" type="text" name="deskripsi" :value="old('deskripsi')" required/>
+            <x-text-area id="deskripsi" class="block mt-1 w-full" type="text" name="deskripsi" :value="old('deskripsi')">{{ old('deskripsi') }}</x-text-area>
             <x-input-error :messages="$errors->get('deskripsi')" class="mt-2" />
         </div>
+
+         <x-primary-button class="justify-center w-full mt-4">
+                {{ __('Submit') }}
+            </x-primary-button>
 
 
     </form>

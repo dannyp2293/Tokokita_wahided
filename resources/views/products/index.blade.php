@@ -3,6 +3,11 @@
 
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-3">
+            @if (session()->has('success'))
+    <x-alert message ="{{ session('success') }}">
+
+    {{-- </x-alert> --}}
+@endif
 
             <div class="flex mt-6 justify-between">
                 <h2 class="font-semibold text-xl">List Products</h2>
