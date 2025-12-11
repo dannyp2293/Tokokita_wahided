@@ -8,17 +8,20 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
-    {
-        $products = Product::paginate(12);
-        // dd($products);
-        return view('products.index', compact('products'));
-    }
+public function index(Request $request)
+{
+    $search = $request->search;
 
-    public function create()
-    {
-        return view ('products.create');
-    }
+    $products = Product::when($search, function ($query) use ($search) {
+        $query->where('nama', 'like', "%{$search}%")
+              ->orWhere('harga', 'like', "%{$search}%");
+    })
+    ->paginate(10)
+    ->withQueryString(); // supaya pagination tetap membawa query search
+
+    return view('products.index', compact('products'));
+}
+
    public function store(Request $request)
 {
     $validated = $request->validate([
