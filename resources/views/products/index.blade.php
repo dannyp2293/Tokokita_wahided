@@ -16,13 +16,8 @@
 
                 {{-- Search Bar --}}
                 <form action="{{ route('products.index') }}" method="GET" class="relative">
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Cari produk..."
-                        class="border border-gray-300 focus:ring focus:ring-blue-300 px-10 py-2 rounded-lg w-72 shadow-sm"
-                    >
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari produk..."
+                        class="border border-gray-300 focus:ring focus:ring-blue-300 px-10 py-2 rounded-lg w-72 shadow-sm">
 
                     <span class="absolute left-3 top-2.5 text-gray-500">
                         🔍
@@ -30,12 +25,17 @@
                 </form>
 
                 {{-- Add Button --}}
-                <a href="{{ route('products.create') }}">
-                    <button class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2 shadow">
-                        <span>➕</span>
-                        <span>Add</span>
-                    </button>
-                </a>
+                @can('create', App\Models\Product::class)
+                    <a href="{{ route('products.create') }}">
+                        <button
+                            class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2 shadow">
+                            <span>➕</span>
+                            <span>Add</span>
+                        </button>
+                    </a>
+                @endcan
+
+
 
             </div>
         </div>
@@ -44,7 +44,8 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
 
             @foreach ($products as $product)
-                <div class="bg-white border border-gray-200 shadow-md hover:shadow-xl transition duration-200 rounded-xl p-4">
+                <div
+                    class="bg-white border border-gray-200 shadow-md hover:shadow-xl transition duration-200 rounded-xl p-4 flex flex-col">
 
                     {{-- Image --}}
                     <div class="w-full h-56 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
@@ -55,37 +56,62 @@
                         @endif
                     </div>
 
-                    {{-- Name + Price --}}
+                    {{-- Name, Price & Stock --}}
                     <div class="my-3 text-center">
                         <p class="text-lg font-medium text-gray-800">{{ $product->nama }}</p>
+
                         <p class="text-gray-600 font-semibold">
                             Rp.{{ number_format($product->harga) }}
                         </p>
+
+                        <p class="text-xs text-gray-500 mt-1">
+                            Stok: {{ $product->stock }}
+                        </p>
                     </div>
 
-                    {{-- Edit Button --}}
-                    <a href="{{ route('products.edit', $product) }}">
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white py-2 w-full rounded-lg font-medium shadow">
-                            Edit
-                        </button>
-                    </a>
+                    {{-- Action Buttons --}}
+                    <div class="mt-auto flex flex-col gap-2">
 
-                    {{-- Delete Button --}}
-                    <form action="{{ route('products.destroy', $product) }}" method="POST" class="mt-2">
-                        @csrf
-                        @method('DELETE')
-                        <button
-                            type="submit"
-                            onclick="return confirm('Yakin mau hapus produk ini?')"
-                            class="bg-red-500 hover:bg-red-600 text-white py-2 w-full rounded-lg font-medium shadow">
-                            Delete
-                        </button>
-                    </form>
+                        {{-- ADMIN --}}
+                        @can('update', $product)
+                            <a href="{{ route('products.edit', $product) }}">
+                                <button
+                                    class="bg-blue-500 hover:bg-blue-600 text-white py-2 w-full rounded-lg font-medium shadow">
+                                    Edit
+                                </button>
+                            </a>
+                        @endcan
 
+                        @can('delete', $product)
+                            <form action="{{ route('products.destroy', $product) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" onclick="return confirm('Yakin mau hapus produk ini?')"
+                                    class="bg-red-500 hover:bg-red-600 text-white py-2 w-full rounded-lg font-medium shadow">
+                                    Delete
+                                </button>
+                            </form>
+                        @endcan
+
+                        {{-- USER BIASA --}}
+                        @auth
+                            @cannot('update', $product)
+                                <form action="{{ route('cart.add', $product) }}" method="POST">
+                                    @csrf
+                                    <button
+                                        class="bg-green-500 hover:bg-green-600 text-white py-2 w-full rounded-lg font-medium shadow">
+                                        🛒 Add to Cart
+                                    </button>
+                                </form>
+                            @endcannot
+                        @endauth
+
+                    </div>
                 </div>
             @endforeach
 
         </div>
+
 
         <div class="mt-6">
             {{ $products->links() }}

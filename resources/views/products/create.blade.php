@@ -34,6 +34,14 @@
                             :value="old('harga')" required />
                         <x-input-error :messages="$errors->get('harga')" class="mt-2" />
                     </div>
+
+                        <div class="mb-4">
+                         <x-input-label for="stock" :value="__('Stock')" />
+                        <x-text-input id="stock" class="block mt-1 w-full" type="text" name="stock"
+                            :value="old('stock')" required />
+                        <x-input-error :messages="$errors->get('stock')" class="mt-2" />
+                    </div>
+
                     <div class="mt-4">
                         <x-input-label for="deskripsi" :value="__('Deskripsi')" />
                         <x-text-area id="deskripsi" class="block mt-1 w-full" type="text" name="deskripsi"
