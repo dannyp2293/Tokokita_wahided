@@ -60,23 +60,18 @@
     <p class="text-gray-500">Keranjang masih kosong.</p>
 @endforelse
 
-@if(count($cart))
+{{-- Total & Tombol Checkout --}}
+@if (count($cart))
     <div class="flex justify-between font-bold text-lg mt-6 border-t pt-4 mb-4">
         <span>Total</span>
         <span>Rp {{ number_format($total) }}</span>
     </div>
 
-    <form action="{{ route('cart.checkout') }}" method="POST">
-        @csrf
-        <button
-            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold shadow">
-            Checkout
-        </button>
-    </form>
+    <a href="{{ route('cart.checkout') }}"
+       class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold shadow">
+        Checkout
+    </a>
 @endif
-
-
-
 
     </div>
 </x-app-layout>

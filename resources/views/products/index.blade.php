@@ -93,18 +93,26 @@
                             </form>
                         @endcan
 
-                        {{-- USER BIASA --}}
+                       {{-- USER BIASA --}}
                         @auth
                             @cannot('update', $product)
-                                <form action="{{ route('cart.add', $product) }}" method="POST">
-                                    @csrf
+                                @if ($product->stock > 0)
+                                    <form action="{{ route('cart.add', $product) }}" method="POST">
+                                        @csrf
+                                        <button
+                                            class="bg-green-500 hover:bg-green-600 text-white py-2 w-full rounded-lg font-medium shadow">
+                                            🛒 Add to Cart
+                                        </button>
+                                    </form>
+                                @else
                                     <button
-                                        class="bg-green-500 hover:bg-green-600 text-white py-2 w-full rounded-lg font-medium shadow">
-                                        🛒 Add to Cart
+                                        class="bg-gray-400 cursor-not-allowed text-white py-2 w-full rounded-lg font-medium shadow">
+                                        Stok Habis
                                     </button>
-                                </form>
+                                @endif
                             @endcannot
                         @endauth
+
 
                     </div>
                 </div>
