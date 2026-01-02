@@ -6,8 +6,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 
 class CartController extends Controller
 {
@@ -39,7 +39,6 @@ public function add(Product $product)
 
     return back()->with('success', 'Produk ditambahkan ke keranjang');
 }
-
 
 
 public function increase(Product $product)
