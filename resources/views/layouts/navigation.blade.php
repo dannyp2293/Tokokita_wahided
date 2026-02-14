@@ -6,7 +6,6 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        {{-- <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" /> --}}
                         <img src="{{ url('logo.png') }}" style="height: 32px; width: 120px; object-fit: contain;">
                     </a>
                 </div>
@@ -25,8 +24,20 @@
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
                         {{ __('Carts') }}
+                        @if(session()->has('cart') && count(session('cart')) > 0)
+                            <span class="ml-1 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">
+                                {{ count(session('cart')) }}
+                            </span>
+                        @endif
+                    </x-nav-link>
+                </div>
+
+                {{-- ✅ TAMBAHKAN INI - MENU PESANAN SAYA --}}
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+                        {{ __('Pesanan Saya') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -37,7 +48,6 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
-
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -54,7 +64,6 @@
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
@@ -84,9 +93,28 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
-         <div class="pt-2 pb-3 space-y-1">
+
+        <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                 {{ __('Products') }}
+            </x-responsive-nav-link>
+        </div>
+
+        {{-- ✅ TAMBAHKAN INI - MENU PESANAN SAYA MOBILE --}}
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+                {{ __('Pesanan Saya') }}
+            </x-responsive-nav-link>
+        </div>
+
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                {{ __('Carts') }}
+                @if(session()->has('cart') && count(session('cart')) > 0)
+                    <span class="ml-1 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">
+                        {{ count(session('cart')) }}
+                    </span>
+                @endif
             </x-responsive-nav-link>
         </div>
 
@@ -105,7 +133,6 @@
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
