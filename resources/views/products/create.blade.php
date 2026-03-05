@@ -16,11 +16,13 @@
                 </div>
                 <div class="w-1/2">
                     <div class="mt-4">
-                        <x-input-label for="foto" :value="__('Foto')" />
-                        <x-text-input accept="image/*" id="foto" class="block mt-1 w-full border" type="file" name="foto"
-                            :value="old('foto')" required
-                            @change="imageUrl = URL.createObjectURL($event.target.files[0])" />
-                        <x-input-error :messages="$errors->get('foto')" class="mt-2" />
+                      <x-input-label value="Images" />
+                       <input type="file"
+                            name="images[]"
+                            multiple
+                            accept="image/*"
+                            class="block w-full border p-2 rounded">
+                             <x-input-error :messages="$errors->get('images')" class="mt-2" />
                     </div>
                     <div class="mt-4">
                         <x-input-label for="nama" :value="__('Nama')" />
@@ -37,8 +39,8 @@
 
                         <div class="mb-4">
                          <x-input-label for="stock" :value="__('Stock')" />
-                        <x-text-input id="stock" class="block mt-1 w-full" type="text" name="stock"
-                            :value="old('stock')" required />
+                    <x-text-input id="stock" class="block mt-1 w-full" type="text" name="stock"
+:value="old('stock')" required />
                         <x-input-error :messages="$errors->get('stock')" class="mt-2" />
                     </div>
 
@@ -50,7 +52,7 @@
                     </div>
                     <x-primary-button class="justify-center w-full mt-4">
                         {{ __('Submit') }}
-                    </x-primary-button>s
+                    </x-primary-button>
                 </div>
 
             </form>

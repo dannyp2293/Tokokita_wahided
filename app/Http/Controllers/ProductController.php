@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 // Memanggil model Product
 use App\Models\Product;
+use App\Models\ProductImage;
 
 // Untuk mengelola file (upload / hapus)
 use Illuminate\Support\Facades\Storage;
@@ -29,12 +30,13 @@ class ProductController extends Controller
         $search = $request->search;
 
         // Query produk + fitur search
-        $products = Product::when($search, function ($query) use ($search) {
-            $query->where('nama', 'like', "%{$search}%")
-                  ->orWhere('harga', 'like', "%{$search}%");
-        })
-        ->paginate(10) // tampilkan 10 data per halaman
-        ->withQueryString(); // agar pagination tetap membawa parameter search
+        $products = Product::with('images')
+            ->when($search, function ($query) use ($search) {
+                $query->where('nama', 'like', "%{$search}%")
+                    ->orWhere('harga', 'like', "%{$search}%");
+            })
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap membawa parameter search
 
         // Kirim data ke view
         return view('products.index', compact('products'));
@@ -48,6 +50,7 @@ class ProductController extends Controller
         // Cek apakah user punya izin membuat produk
         $this->authorize('create', Product::class);
 
+
         return view('products.create');
     }
 
@@ -56,44 +59,42 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // Cek authorization
         $this->authorize('create', Product::class);
 
-        // Validasi input dari form
         $validated = $request->validate([
             'nama'      => 'required',
             'harga'     => 'required|numeric',
             'stock'     => 'required|integer|min:0',
             'deskripsi' => 'nullable',
-            'foto'      => 'required|image|mimes:jpeg,png,jpg',
+            'images.*'  => 'image|mimes:jpeg,png,jpg'
         ]);
 
-        // Ambil file foto
-        $foto = $request->file('foto');
-
-        // Pastikan folder penyimpanan ada
-        if (! file_exists(public_path('storage/products'))) {
-            mkdir(public_path('storage/products'), 0777, true);
-        }
-
-        // Simpan file ke folder public/storage/products
-        $filename = $foto->hashName();
-        $foto->move(public_path('storage/products'), $filename);
-
-        // Simpan data ke database
-        Product::create([
-            'nama'      => $validated['nama'],
-            'harga'     => $validated['harga'],
-            'stock'     => $validated['stock'],
+        // buat product dulu
+        $product = Product::create([
+            'nama' => $validated['nama'],
+            'harga' => $validated['harga'],
+            'stock' => $validated['stock'],
             'deskripsi' => $validated['deskripsi'] ?? null,
-            'foto'      => 'products/' . $filename,
         ]);
+
+        // upload multiple images
+        if ($request->hasFile('images')) {
+
+            foreach ($request->file('images') as $image) {
+
+                $path = $image->store('products', 'public');
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $path
+                ]);
+            }
+        }
 
         return redirect()
             ->route('products.index')
             ->with('success', 'Product Berhasil Ditambahkan');
     }
-
     /**
      * Menampilkan halaman edit produk
      */
@@ -110,48 +111,42 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        // Cek izin update
         $this->authorize('update', $product);
 
-        // Validasi data
         $validated = $request->validate([
             'nama'      => 'required',
             'harga'     => 'required|numeric',
             'stock'     => 'required|integer|min:0',
             'deskripsi' => 'nullable',
-            'foto'      => 'nullable|image|mimes:jpeg,png,jpg',
+            'images.*'  => 'image|mimes:jpeg,png,jpg'
         ]);
 
-        // Update data biasa
-        $product->nama = $request->nama;
-        $product->harga = str_replace(".", "", $request->harga);
-        $product->stock = $request->stock;
-        $product->deskripsi = $request->deskripsi;
 
-        // Jika user upload foto baru
-        if ($request->hasFile('foto')) {
+        $product->update([
+            'nama' => $request->nama,
+            'harga' => str_replace(".", "", $request->harga),
+            'stock' => $request->stock,
+            'deskripsi' => $request->deskripsi
+        ]);
 
-            // Hapus foto lama
-            if ($product->foto) {
-                Storage::disk('public')->delete($product->foto);
+
+        if ($request->hasFile('images')) {
+
+            foreach ($request->file('images') as $image) {
+
+                $path = $image->store('products', 'public');
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $path
+                ]);
             }
-
-            // Simpan foto baru
-            $foto = $request->file('foto');
-            $foto->storeAs('products', $foto->hashName(), 'public');
-
-            // Simpan path foto ke database
-            $product->foto = 'products/' . $foto->hashName();
         }
-
-        // Simpan perubahan
-        $product->save();
 
         return redirect()
             ->route('products.index')
             ->with('success', 'Update Product Success');
     }
-
     /**
      * Menghapus produk
      */
@@ -161,10 +156,13 @@ class ProductController extends Controller
         $this->authorize('delete', $product);
 
         // Hapus foto jika ada
-        if ($product->foto) {
-            Storage::disk('public')->delete($product->foto);
-        }
+            foreach ($product->images as $image) {
 
+            Storage::disk('public')->delete($image->image);
+
+            $image->delete();
+
+}
         // Hapus data dari database
         $product->delete();
 

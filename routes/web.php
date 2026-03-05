@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\DashboardController;
+use App\Models\ProductImage;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,6 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::get('products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::delete('/product-image/{id}', function($id){$image = ProductImage::findOrFail($id);Storage::disk('public')->delete($image->image);
+     $image->delete(); return back();
+
+})->name('products.image.delete');
 
     // Cart Routes
     Route::get('/cart', function () {
