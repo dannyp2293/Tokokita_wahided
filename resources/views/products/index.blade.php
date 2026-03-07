@@ -49,22 +49,6 @@
 
                     </form>
 
-
-                    <!-- ADD BUTTON -->
-                    @can('create', App\Models\Product::class)
-                        <a href="{{ route('products.create') }}">
-
-                            <button
-                                class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2 shadow">
-
-                                <span>➕</span>
-                                <span>Add</span>
-
-                            </button>
-
-                        </a>
-                    @endcan
-
                 </div>
             </div>
 
@@ -84,20 +68,19 @@
 
                             @if ($product->images->count())
                                 <div x-data='{
-images: @json($product->images->pluck('image')),
-index: 0,
-init(){
-setInterval(()=>{
-this.index = (this.index + 1) % this.images.length
-},3000)
-}
-}'
+                                                images: @json($product->images->pluck('image')),
+                                                index: 0,
+                                                init(){
+                                                setInterval(()=>{
+                                                this.index = (this.index + 1) % this.images.length
+                                                },3000)
+                                                }
+                                                }'
                                     class="relative w-full h-full flex items-center justify-center">
 
-                                    <img
-                                    :src="'/storage/' + images[index]"
-                                    class="object-contain w-full h-full cursor-pointer"
-                                    @click="open=true; image='/storage/' + images[index]">
+                                    <img :src="'/storage/' + images[index]"
+                                        class="object-contain w-full h-full cursor-pointer"
+                                        @click="open=true; image='/storage/' + images[index]">
 
 
                                     <!-- PREV -->
@@ -148,41 +131,7 @@ this.index = (this.index + 1) % this.images.length
 
 
 
-                        <!-- BUTTONS -->
-                        <div class="mt-auto flex flex-col gap-2">
-
-                            <!-- ADMIN -->
-                            @can('update', $product)
-                                <a href="{{ route('products.edit', $product) }}">
-
-                                    <button
-                                        class="bg-blue-500 hover:bg-blue-600 text-white py-2 w-full rounded-lg font-medium shadow">
-
-                                        Edit
-
-                                    </button>
-
-                                </a>
-                            @endcan
-
-
-                            @can('delete', $product)
-                                <form action="{{ route('products.destroy', $product) }}" method="POST">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="submit" onclick="return confirm('Yakin mau hapus produk ini?')"
-                                        class="bg-red-500 hover:bg-red-600 text-white py-2 w-full rounded-lg font-medium shadow">
-
-                                        Delete
-
-                                    </button>
-
-                                </form>
-                            @endcan
-
-
+                       
 
                             <!-- USER -->
                             @auth

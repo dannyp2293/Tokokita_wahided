@@ -24,6 +24,13 @@ class ProductController extends Controller
     /**
      * Menampilkan daftar produk
      */
+
+    public function adminIndex()
+{
+    $products = Product::latest()->get();
+
+    return view('admin.products.index', compact('products'));
+}
     public function index(Request $request)
     {
         // Ambil keyword pencarian dari input search

@@ -11,28 +11,64 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+           <!-- Navigation Links -->
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
-                        {{ __('Products') }}
-                    </x-nav-link>
-                </div>
+@if(auth()->user()->role === 'superadmin')
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
-                        {{ __('Carts') }}
-                        @if(session()->has('cart') && count(session('cart')) > 0)
-                            <span class="ml-1 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">
-                                {{ count(session('cart')) }}
-                            </span>
-                        @endif
-                    </x-nav-link>
-                </div>
+    <!-- ADMIN MENU -->
+
+    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+            {{ __('Admin Dashboard') }}
+        </x-nav-link>
+    </div>
+
+    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+        <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+            {{ __('Manage Products') }}
+        </x-nav-link>
+    </div>
+
+    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+        <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+            {{ __('Manage Orders') }}
+        </x-nav-link>
+    </div>
+
+@else
+
+    <!-- USER MENU -->
+
+    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            {{ __('Dashboard') }}
+        </x-nav-link>
+    </div>
+
+    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+        <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
+            {{ __('Products') }}
+        </x-nav-link>
+    </div>
+
+    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+        <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+            {{ __('Carts') }}
+            @if(session()->has('cart') && count(session('cart')) > 0)
+                <span class="ml-1 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">
+                    {{ count(session('cart')) }}
+                </span>
+            @endif
+        </x-nav-link>
+    </div>
+
+    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+        <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+            {{ __('Pesanan Saya') }}
+        </x-nav-link>
+    </div>
+
+@endif
 
                 {{-- ✅ TAMBAHKAN INI - MENU PESANAN SAYA --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
