@@ -45,6 +45,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
+//     Route::prefix('admin')->group(function () {
+
+//     Route::get('/dashboard', [AdminController::class,'dashboard'])
+//         ->name('admin.dashboard');
+
+//     Route::resource('/products', ProductController::class);
+
+// });
+
     /*
     |----------------------------
     | Admin Products

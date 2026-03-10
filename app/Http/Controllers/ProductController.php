@@ -46,7 +46,7 @@ class ProductController extends Controller
             ->withQueryString(); // agar pagination tetap membawa parameter search
 
         // Kirim data ke view
-        return view('products.index', compact('products'));
+        return view('admin.products.index', compact('products'));
     }
 
     /**
@@ -58,7 +58,7 @@ class ProductController extends Controller
         $this->authorize('create', Product::class);
 
 
-        return view('products.create');
+        return view('admin.products.create');
     }
 
     /**
