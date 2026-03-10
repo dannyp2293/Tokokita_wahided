@@ -27,7 +27,7 @@ class ProductController extends Controller
 
     public function adminIndex()
 {
-    $products = Product::latest()->get();
+   $products = Product::latest()->paginate(12);
 
     return view('admin.products.index', compact('products'));
 }
@@ -46,7 +46,7 @@ class ProductController extends Controller
             ->withQueryString(); // agar pagination tetap membawa parameter search
 
         // Kirim data ke view
-        return view('admin.products.index', compact('products'));
+        return view('products.index', compact('products'));
     }
 
     /**
