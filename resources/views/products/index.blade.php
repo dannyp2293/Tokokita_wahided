@@ -18,7 +18,6 @@
         </div>
 
 
-
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-3">
 
             @if (session()->has('success'))
@@ -32,7 +31,6 @@
                 <h2 class="font-semibold text-2xl tracking-wide text-gray-700">
                     List Products
                 </h2>
-
 
                 <div class="flex items-center space-x-4">
 
@@ -50,99 +48,72 @@
                     </form>
 
                 </div>
+
             </div>
 
 
-
             <!-- PRODUCT GRID -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
-
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
 
                 @foreach ($products as $product)
                     <div
-                        class="bg-white border border-gray-200 shadow-md hover:shadow-xl transition duration-200 rounded-xl p-4 flex flex-col">
+                        class="bg-white rounded-xl shadow hover:shadow-xl transition duration-300 overflow-hidden flex flex-col">
 
                         <!-- IMAGE -->
-                        <div
-                            class="w-full h-56 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                        <div class="relative bg-gray-100 h-52 flex items-center justify-center overflow-hidden group">
 
                             @if ($product->images->count())
-                                <div x-data='{
-                                                images: @json($product->images->pluck('image')),
-                                                index: 0,
-                                                init(){
-                                                setInterval(()=>{
-                                                this.index = (this.index + 1) % this.images.length
-                                                },3000)
-                                                }
-                                                }'
-                                    class="relative w-full h-full flex items-center justify-center">
-
-                                    <img :src="'/storage/' + images[index]"
-                                        class="object-contain w-full h-full cursor-pointer"
-                                        @click="open=true; image='/storage/' + images[index]">
-
-
-                                    <!-- PREV -->
-                                    <button x-show="images.length > 1"
-                                        @click="index = (index - 1 + images.length) % images.length"
-                                        class="absolute left-2 bg-black bg-opacity-40 text-white px-2 py-1 rounded">
-
-                                        ‹
-
-                                    </button>
-
-
-                                    <!-- NEXT -->
-                                    <button x-show="images.length > 1" @click="index = (index + 1) % images.length"
-                                        class="absolute right-2 bg-black bg-opacity-40 text-white px-2 py-1 rounded">
-
-                                        ›
-
-                                    </button>
-
-                                </div>
+                                <img src="{{ asset('storage/' . $product->images->first()->image) }}"
+                                    class="object-contain h-full transition duration-300 group-hover:scale-110">
                             @else
                                 <span class="text-gray-400 text-sm">
                                     No Image
                                 </span>
                             @endif
 
+
+                            <!-- STOCK BADGE -->
+                            @if ($product->stock > 0)
+                                <span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                                    In Stock
+                                </span>
+                            @else
+                                <span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                                    Sold Out
+                                </span>
+                            @endif
+
                         </div>
 
 
+                        <!-- INFO -->
+                        <div class="p-4 flex flex-col flex-1">
 
-                        <!-- NAME PRICE STOCK -->
-                        <div class="my-3 text-center">
-
-                            <p class="text-lg font-medium text-gray-800">
+                            <h3 class="text-gray-800 font-semibold text-sm line-clamp-2">
                                 {{ $product->nama }}
+                            </h3>
+
+                            <p class="text-green-600 font-bold text-lg mt-1">
+                                Rp {{ number_format($product->harga) }}
                             </p>
 
-                            <p class="text-gray-600 font-semibold">
-                                Rp.{{ number_format($product->harga) }}
-                            </p>
-
-                            <p class="text-xs text-gray-500 mt-1">
+                            <p class="text-xs text-gray-400">
                                 Stok: {{ $product->stock }}
                             </p>
 
-                        </div>
 
+                            <!-- BUTTON -->
+                            <div class="mt-auto pt-3">
 
+                                @auth
 
-                       
-
-                            <!-- USER -->
-                            @auth
-                                @cannot('update', $product)
                                     @if ($product->stock > 0)
                                         <form action="{{ route('cart.add', $product) }}" method="POST">
 
                                             @csrf
 
                                             <button
-                                                class="bg-green-500 hover:bg-green-600 text-white py-2 w-full rounded-lg font-medium shadow">
+                                                class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-medium transition">
 
                                                 🛒 Add to Cart
 
@@ -150,15 +121,16 @@
 
                                         </form>
                                     @else
-                                        <button
-                                            class="bg-gray-400 cursor-not-allowed text-white py-2 w-full rounded-lg font-medium shadow">
+                                        <button class="w-full bg-gray-400 text-white py-2 rounded-lg cursor-not-allowed">
 
                                             Stok Habis
 
                                         </button>
                                     @endif
-                                @endcannot
-                            @endauth
+
+                                @endauth
+
+                            </div>
 
                         </div>
 
@@ -166,7 +138,6 @@
                 @endforeach
 
             </div>
-
 
 
             <div class="mt-6">
