@@ -1,61 +1,68 @@
 <x-app-layout>
 
+<div class="max-w-5xl mx-auto px-6 py-6">
 
+<h2 class="text-xl font-semibold mb-6">Create Product</h2>
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-3">
+<div x-data="{ imageUrl: '/storage/noimage.png' }">
 
-        <div class="flex mt-6 ">
-            <h2 class="font-semibold text-xl">Create Product</h2>
+<form enctype="multipart/form-data"
+      method="POST"
+      action="{{ route('admin.products.store') }}"
+      class="grid grid-cols-2 gap-8 bg-white p-6 rounded-lg shadow">
 
-        </div>
-        <div class="mt-4" x-data="{ imageUrl: '/storage/noimage.png' }">
-            <form enctype="multipart/form-data" method="POST" action="{{ route('products.store') }}" class="flex gap-5">
-                @csrf
-                <div class="w-1/2">
-                    <img :src="imageUrl" class="rounded-md" />
-                </div>
-                <div class="w-1/2">
-                    <div class="mt-4">
-                      <x-input-label value="Images" />
-                       <input type="file"
-                            name="images[]"
-                            multiple
-                            accept="image/*"
-                            class="block w-full border p-2 rounded">
-                             <x-input-error :messages="$errors->get('images')" class="mt-2" />
-                    </div>
-                    <div class="mt-4">
-                        <x-input-label for="nama" :value="__('Nama')" />
-                        <x-text-input id="nama" class="block mt-1 w-full" type="text" name="nama"
-                            :value="old('nama')" required />
-                        <x-input-error :messages="$errors->get('nama')" class="mt-2" />
-                    </div>
-                    <div class="mt-4">
-                        <x-input-label for="harga" :value="__('Harga')" />
-                        <x-text-input id="harga" class="block mt-1 w-full" type="text" name="harga"
-                            :value="old('harga')" required />
-                        <x-input-error :messages="$errors->get('harga')" class="mt-2" />
-                    </div>
+@csrf
 
-                        <div class="mb-4">
-                         <x-input-label for="stock" :value="__('Stock')" />
-                    <x-text-input id="stock" class="block mt-1 w-full" type="text" name="stock"
-:value="old('stock')" required />
-                        <x-input-error :messages="$errors->get('stock')" class="mt-2" />
-                    </div>
+<!-- IMAGE PREVIEW -->
+<div>
+    <img :src="imageUrl"
+         class="rounded-md w-full h-80 object-cover border">
+</div>
 
-                    <div class="mt-4">
-                        <x-input-label for="deskripsi" :value="__('Deskripsi')" />
-                        <x-text-area id="deskripsi" class="block mt-1 w-full" type="text" name="deskripsi"
-                            >{{ old('deskripsi') }}</x-text-area>
-                        <x-input-error :messages="$errors->get('deskripsi')" class="mt-2" />
-                    </div>
-                    <x-primary-button class="justify-center w-full mt-4">
-                        {{ __('Submit') }}
-                    </x-primary-button>
-                </div>
+<!-- FORM INPUT -->
+<div>
 
-            </form>
-        </div>
-    </div>
+<div class="mb-4">
+<x-input-label value="Images" />
+
+<input type="file"
+       name="images[]"
+       accept="image/*"
+       @change="imageUrl = URL.createObjectURL($event.target.files[0])"
+       class="block w-full border p-2 rounded">
+
+</div>
+
+<div class="mb-4">
+<x-input-label value="Nama"/>
+<x-text-input name="nama" class="w-full"/>
+</div>
+
+<div class="mb-4">
+<x-input-label value="Harga"/>
+<x-text-input name="harga" class="w-full"/>
+</div>
+
+<div class="mb-4">
+<x-input-label value="Stock"/>
+<x-text-input name="stock" class="w-full"/>
+</div>
+
+<div class="mb-4">
+<x-input-label value="Deskripsi"/>
+<textarea name="deskripsi" class="w-full border rounded p-2"></textarea>
+</div>
+
+<button class="w-full bg-gray-800 text-white py-2 rounded">
+Submit
+</button>
+
+</div>
+
+</form>
+</div>
+
+</div>
+</div>
+
 </x-app-layout>
